@@ -1,0 +1,770 @@
+================================================================================
+            FILE 5: PYTHON BASICS, STRINGS, LISTS, AND THEORY
+================================================================================
+Reference Manual: Python Data Science Syllabus
+Topic: Data Types & Measurement Scales Theory, Built-in Functions, 
+       Math & Random Modules, String Methods, List Operations, 
+       and Foundational Programming Logic
+================================================================================
+
+--------------------------------------------------------------------------------
+1. DATA TYPES THEORY & MEASUREMENT SCALES
+--------------------------------------------------------------------------------
+
+[1] Types of Data with Respect to Organization
+----------------------------------------------
+1. Structured Data:
+   - Organized and formatted in tabular form with rows and columns.
+   - Easily searchable, making it suitable for relational databases and analytics.
+   - Examples: Spreadsheets, relational databases (SQL), and CSV files.
+   - Applications: Commonly used in classification, regression, and recommendation systems.
+
+2. Unstructured Data:
+   - Lacks a predefined data model or schema.
+   - Includes text, images, audio, and video files.
+   - Extracting insights often requires Natural Language Processing (NLP), 
+     Computer Vision (CV), or audio signal processing techniques.
+   - Examples: Social media posts, emails, documents, and multimedia content.
+
+3. Semi-Structured Data:
+   - Falls between structured and unstructured data.
+   - Contains organizational properties (markers, tags, hierarchies) but does not 
+     conform to a rigid relational database schema.
+   - Examples: JSON (JavaScript Object Notation), XML, and HTML.
+
+
+[2] Specialized Data Modalities
+-------------------------------
+1. Text Data:
+   - Unstructured text found in articles, emails, customer reviews, and social media posts.
+   - Analysis tasks: Sentiment analysis, text classification, named entity recognition (NER), 
+     and machine translation.
+   - Techniques: Natural Language Processing (NLP) and text mining.
+
+2. Image Data:
+   - Comprises visual information in digital raster format (pixels).
+   - Analysis tasks: Object detection, image classification, segmentation, and facial recognition.
+   - Techniques: Convolutional Neural Networks (CNNs).
+
+3. Audio Data:
+   - Consists of sound waves captured in digital format.
+   - Includes speech recordings, music files, and environmental acoustic signals.
+   - Analysis tasks: Speech recognition, speaker identification, emotion detection, audio classification.
+   - Techniques: Digital speech processing and deep learning models.
+
+4. Time-Series Data:
+   - Represents numerical observations collected sequentially over regular time intervals.
+   - Includes stock prices, weather patterns, IoT sensor readings, and website server traffic.
+   - Analysis tasks: Time-series forecasting, anomaly detection, and trend analysis.
+   - Models: ARIMA (AutoRegressive Integrated Moving Average) and LSTM (Long Short-Term Memory) networks.
+
+5. Geospatial Data:
+   - Contains information identifying geographic locations and surface features on Earth.
+   - Includes maps, GPS coordinates, satellite imagery, and geotagged records.
+   - Applications: GIS (Geographic Information Systems), navigation, urban planning, environmental monitoring.
+   - Techniques: Geospatial spatial analysis and remote sensing.
+
+
+[3] Classification by Nature of Values
+--------------------------------------
+1. Quantitative Data:
+   - Data that can be measured with numbers, representing quantifiable amounts (e.g., duration, speed, count).
+   - Subtypes:
+     * Discrete Data: Whole countable numbers that cannot be broken down into fractions/decimals 
+       (e.g., number of items, number of books, employee counts).
+     * Continuous Data: Measurements that can take any value within a continuum and can be broken down 
+       into infinite fractions/decimals (e.g., height, weight, temperature, elapsed time).
+
+2. Qualitative Data:
+   - Non-numerical data that is categorical in nature (e.g., yes/no responses, eye colour, blood group).
+   - Subtypes:
+     * Nominal Data: Named categories without rank.
+     * Ordinal Data: Ordered or ranked categories.
+
+
+[4] The 5 Levels of Measurement (Exact Syllabus Definitions)
+-----------------------------------------------------------
+1. Nominal Data:
+   - Definition: Represents categories or labels without any inherent order or ranking.
+     These categories are mutually exclusive and can be counted, but they cannot be 
+     ordered or compared quantitatively.
+   - Characteristics:
+     * Categories without a natural order.
+     * Used for labeling or naming variables.
+     * Only Mode can be calculated; Mean and Median are not applicable.
+   - Examples:
+     * Gender (Male, Female)
+     * Blood type (A, B, AB, O)
+     * Country names (USA, Canada, India)
+     * Marital Status (Single, Married, Divorced)
+     * Color of cars (Red, Blue, Green)
+     * Birth month of employees
+
+2. Ordinal Data:
+   - Definition: Represents categories that have a meaningful order or ranking, but the 
+     differences between the ranks are not necessarily uniform, known, or measurable. 
+     It shows relative position but does not allow for quantitative difference computation.
+   - Characteristics:
+     * Ordered categories, but intervals between them are not consistent.
+     * Can be ranked, but not quantitatively compared.
+     * Median and Mode can be calculated; Mean is not meaningful.
+   - Examples:
+     * Education level (High School, Bachelor's, Master's, PhD)
+     * Customer satisfaction (Unsatisfied, Satisfied, Very Satisfied)
+     * Military ranks (Private, Corporal, Sergeant, Lieutenant)
+     * Shirt sizes in a clothing store (S, M, L, XL)
+     * Rankings of tennis players based on tournament performance
+     * Pain level on a scale from 0 to 10
+
+3. Interval Data:
+   - Definition: Numerical data where the intervals between values are meaningful and consistent, 
+     but there is NO true zero point. This means zero does not indicate the complete absence 
+     of the property; you can measure differences, but cannot compute meaningful ratios.
+   - Characteristics:
+     * Ordered with consistent intervals between values.
+     * No true zero point (0 is an arbitrary point on the scale).
+     * Mean, Median, and Mode can be calculated; Ratios are not meaningful (e.g., 40°C is not twice as hot as 20°C).
+   - Examples:
+     * Temperature in Celsius or Fahrenheit (e.g., 0°C, 20°C, 30°C)
+     * Dates / Calendar years (e.g., 2000, 2010, 2020)
+     * IQ test scores
+
+4. Ratio Data:
+   - Definition: Numerical data with both consistent intervals and a TRUE ZERO POINT, 
+     meaning zero represents the complete absence of the measured attribute. 
+     This allows for the full range of mathematical operations, including meaningful ratios.
+   - Characteristics:
+     * Ordered with consistent intervals and an absolute true zero point.
+     * Ratios, differences, and all statistical measures (Mean, Median, Mode) are meaningful.
+     * Allows full arithmetic (+, -, *, /).
+   - Examples:
+     * Height (e.g., 150 cm, 180 cm)
+     * Weight (e.g., 50 kg, 75 kg)
+     * Income / Salary (e.g., $20,000, $50,000)
+     * Distance traveled in kilometers (0 km means no distance)
+     * Elapsed time of a race in minutes
+     * Number of pages in different books
+
+5. Cardinal Data:
+   - Definition: Refers to data that is quantifiable and can be measured, where the magnitude 
+     of differences is meaningful. Used in contexts where exact countable quantities matter. 
+     In many statistical contexts, it is treated as a synonym for ratio data.
+   - Characteristics:
+     * Quantifiable and measurable numerical data.
+     * Meaningful differences and meaningful ratios.
+     * Used where exact values and counts matter.
+   - Examples:
+     * Financial amounts (revenue, cost)
+     * Counts of items (number of sales, number of customers)
+
+
+--------------------------------------------------------------------------------
+2. PYTHON BUILT-IN FUNCTIONS
+--------------------------------------------------------------------------------
+
+[1] Number System Conversions
+-----------------------------
+Prefixes:
+- Binary:      0b
+- Octal:       0o
+- Hexadecimal: 0x
+
+Functions:
+- bin(x): Converts an integer to a binary string.
+  Example: bin(12) -> '0b1100'
+           bin(0o127) -> '0b1010111'
+- oct(x): Converts an integer to an octal string.
+  Example: oct(12) -> '0o14'
+- hex(x): Converts an integer to a hexadecimal string.
+  Example: hex(12) -> '0xc'
+- int(x, base=10): Converts a string or number in a given base to a decimal integer.
+  Example: int(0b1101) -> 13
+           int(0o127) -> 87
+
+
+[2] Character and ASCII Functions
+---------------------------------
+Standard ASCII Ranges:
+- 48 - 57:  Digits '0' - '9'
+- 65 - 90:  Uppercase letters 'A' - 'Z'
+- 97 - 122: Lowercase letters 'a' - 'z'
+- 33 - 47 & 58 - 64: Special Characters
+
+1. chr(i):
+   - Accepts an integer ASCII/Unicode code point and returns the string character.
+   - If non-printable, returns escape representation (e.g., '\x0c').
+   - Examples:
+     chr(65) -> 'A'
+     chr(48) -> '0'
+     chr(33) -> '!'
+     chr(12) -> '\x0c'
+
+2. ord(c):
+   - Reverse of chr(). Accepts a single character string and returns its integer ASCII/Unicode code point.
+   - Examples:
+     ord('A') -> 65
+     ord('a') -> 97
+     ord('0') -> 48
+
+3. ascii(object):
+   - Returns a readable string representation of an object.
+   - Encloses strings in quotes, lists in brackets, tuples in parentheses.
+   - Non-ASCII/non-printable characters are escaped using \x, \u, or \U.
+   - Examples:
+     ascii(12)     -> '12'
+     ascii('A')    -> "'A'"
+     ascii("µ")    -> "'\\xb5'"
+     ascii([12, 'good', 34.5]) -> "[12, 'good', 34.5]"
+
+
+[3] Logic & Iterables: any() and all()
+--------------------------------------
+Truth Table on Iterables:
+--------------------------------------------------------------------------------
+Condition                               | any()   | all()
+----------------------------------------+---------+-------
+All Truthy values (e.g., [11, 22])      | True    | True
+All Falsy values (e.g., [False, 0])     | False   | False
+One Truthy value (all others Falsy)     | True    | False
+One Falsy value (all others Truthy)     | True    | False
+Empty Iterable (e.g., [])               | False   | True
+--------------------------------------------------------------------------------
+
+Code Verification:
+    all([11, 22])   # True
+    all([11, 0])    # False
+    any([11, 0])    # True
+    any([False, 0]) # False
+    any([])         # False
+    all([])         # True
+
+
+[4] Mathematical Built-ins
+--------------------------
+1. divmod(a, b):
+   Returns a tuple (quotient, remainder) equal to (a // b, a % b).
+   Examples:
+     divmod(12, 5)   -> (2, 2)
+     divmod(13, 5)   -> (2, 3)
+     divmod(13.2, 5) -> (2.0, 3.1999999999999993)
+
+2. pow(base, exp):
+   Returns base raised to the power exp.
+   Examples:
+     pow(2, 4)   -> 16
+     pow(2, 4.4) -> 21.112126572366314
+
+3. round(number, ndigits=None):
+   Rounds number to ndigits decimal places or nearest integer.
+   Examples:
+     round(12.6) -> 13
+     round(12.3) -> 12
+
+4. abs(x):
+   Returns the absolute value of a number.
+   Examples:
+     abs(-12)   -> 12
+     abs(-12.3) -> 12.3
+
+5. sum(iterable):
+   Sums elements of an iterable (all elements must be numerical or boolean).
+   Examples:
+     sum([11, 22, 33])   -> 66
+     sum([11, 22, True]) -> 34  (True evaluates to 1)
+
+6. max(iterable) and min(iterable):
+   Returns largest / smallest item in an iterable.
+   Examples:
+     max([11, 22, True]) -> 22
+     min([11, 22, True]) -> True (True evaluates to 1, smallest in list)
+
+
+--------------------------------------------------------------------------------
+3. PYTHON MODULES: MATH AND RANDOM
+--------------------------------------------------------------------------------
+
+[1] math Module
+---------------
+Import:
+    import math  (or `from math import *`)
+
+Functions from Syllabus:
+1. math.ceil(x):
+   Returns the smallest integer greater than or equal to x.
+   Examples:
+     math.ceil(12.6)  -> 13
+     math.ceil(-12.6) -> -12
+
+2. math.floor(x):
+   Returns the largest integer less than or equal to x.
+   Examples:
+     math.floor(12.3)  -> 12
+     math.floor(-12.6) -> -13
+
+3. math.exp(x):
+   Returns e raised to the power of x (e^x).
+   Example:
+     math.exp(2) -> 7.38905609893065
+
+4. math.fabs(x):
+   Returns the absolute value of x as a float.
+   Examples:
+     math.fabs(-12.4) -> 12.4
+     math.fabs(12.4)  -> 12.4
+
+5. math.factorial(x):
+   Returns the factorial of a non-negative integer x.
+   Example:
+     math.factorial(4) -> 24  (4 * 3 * 2 * 1)
+
+6. math.copysign(x, y):
+   Returns a float with the magnitude (absolute value) of x, but the sign of y.
+   Examples:
+     math.copysign(12, -2) -> -12.0
+     math.copysign(-12, 2) -> 12.0
+
+7. math.sqrt(x):
+   Returns the square root of x.
+   Example:
+     math.sqrt(12) -> 3.4641016151377544
+
+8. math.gcd(a, b):
+   Returns the greatest common divisor of integers a and b.
+
+9. math.pi:
+   Constant representing Archimedes' constant pi: 3.141592653589793
+
+
+[2] random Module
+-----------------
+Import:
+    import random
+
+Functions from Syllabus:
+1. random.randint(a, b):
+   Generates a random integer N such that a <= N <= b (inclusive of both endpoints).
+   Examples:
+     random.randint(2, 4)   # Generates 2, 3, or 4
+     random.randint(-2, 4)  # Generates any integer between -2 and 4
+
+2. random.randrange(start, stop, step):
+   Generates an integer random number within a given range with a step parameter 
+   (exclusive of stop).
+   Example:
+     random.randrange(2, 10, 2)  # Generates 2, 4, 6, or 8
+
+3. random.random():
+   Generates a random floating-point number in the range [0.0, 1.0).
+   Example:
+     random.random()  # e.g., 0.472819...
+
+4. random.uniform(a, b):
+   Generates a random floating-point number N such that a <= N <= b.
+   Example:
+     random.uniform(11, 33)  # e.g., 18.73317573...
+
+5. random.shuffle(x):
+   Shuffles the elements of list x in-place.
+   Example:
+     l = [11, 22, 33]
+     random.shuffle(l)
+     print(l)  # e.g., [33, 11, 22]
+
+
+--------------------------------------------------------------------------------
+4. STRING METHODS
+--------------------------------------------------------------------------------
+
+Reference Session String:
+    s = "This is a sample string"
+
+1. len(s):
+   Returns total character count.
+   len("This is a sample string") -> 23
+
+2. s.count(sub[, start[, end]]):
+   Counts non-overlapping occurrences of substring.
+   s.count(' ')      -> 4
+   s.count('i')      -> 3
+   s.count('i', 4)   -> 2 (search starting at index 4)
+   s.count('i', 4, 10) -> 1 (search between index 4 and 10)
+
+3. s.startswith(prefix) & s.endswith(suffix):
+   Returns True/False based on prefix/suffix match (case-sensitive).
+   s.startswith('This') -> True
+   s.startswith('th')   -> False
+   s.endswith('string') -> True
+   s.endswith('str')    -> False
+
+4. s.find(sub[, start[, end]]) vs. s.index(sub[, start[, end]]):
+   - find(): Returns lowest index where sub is found; returns -1 if not found.
+   - index(): Like find, but raises ValueError if sub is not found.
+   s.find('i')     -> 2
+   s.index('i')    -> 2
+   s.find('z')     -> -1
+   s.index('z')    -> ValueError: substring not found
+
+5. s.rfind(sub) vs. s.rindex(sub):
+   - Searches for sub starting from the right (highest index).
+   - rfind() returns -1 if not found; rindex() raises ValueError.
+   s.rfind('i')       -> 20
+   s.rfind('string')  -> 17
+   s.rindex('string') -> 17
+
+6. Case Testing & Character Checks:
+   - s.isupper(): True if all cased characters are uppercase and there is at least one cased character.
+   - s.islower(): True if all cased characters are lowercase.
+   - s.isalpha(): True if all characters are alphabetic (no spaces/digits).
+   - s.isalnum(): True if all characters are alphanumeric (letters or numbers, no spaces).
+   Examples:
+     "This is".isupper()      -> False
+     "THISISASTRING".isupper() -> True
+     "THISISASTRING".isalpha() -> True
+     "THISISASTRING".isalnum() -> True
+
+7. Character Classification Differences: isdecimal() vs. isdigit() vs. isnumeric()
+   - isdecimal(): Strictly decimal digits 0-9 (characters that can form base-10 numbers).
+   - isdigit(): Includes decimals, plus digits like superscripts (e.g., '\u00B2' -> ²).
+   - isnumeric(): Includes decimals, digits, plus numeric characters like fractions (e.g., '\u00BC' -> ¼).
+   
+   Summary Table:
+   -----------------------------------------------------------------------------
+   String Character   | isdecimal() | isdigit() | isnumeric()
+   -------------------+-------------+-----------+------------
+   '123'              | True        | True      | True
+   '\u00B2' (²)       | False       | True      | True
+   '\u00BC' (¼)       | False       | False     | True
+   'abc'              | False       | False     | False
+   -----------------------------------------------------------------------------
+
+8. Stripping Whitespace:
+   - s.strip([chars]): Removes leading and trailing characters (default whitespace).
+   - s.lstrip([chars]): Removes leading (left) characters.
+   - s.rstrip([chars]): Removes trailing (right) characters.
+   Examples:
+     s = "    This is a string      "
+     s.strip()  -> 'This is a string'
+     s.lstrip() -> 'This is a string      '
+     s.rstrip() -> '    This is a string'
+     '007800'.lstrip('0') -> '7800'
+
+9. s.join(iterable):
+   Concatenates an iterable of strings using s as delimiter.
+   Examples:
+     "-".join(['a', 'b', 'c']) -> 'a-b-c'
+     "This is".join("good")     -> 'gThis isoThis isoThis isd'
+
+10. s.split([sep]):
+    Splits string by delimiter sep into a list of strings (default splits by whitespace).
+    Examples:
+      "This is".split()          -> ['This', 'is']
+      "This|is|a|line".split('|') -> ['This', 'is', 'a', 'line']
+
+11. s.partition(sep) vs. s.rpartition(sep):
+    - Splits the string at the first (or last for rpartition) occurrence of sep,
+      returning a 3-tuple: (head, sep, tail).
+    - If sep is not found, partition returns (s, '', ''); rpartition returns ('', '', s).
+    Examples:
+      s = "This is a sample string"
+      s.partition('sample') -> ('This is a ', 'sample', ' string')
+      s.partition('is')     -> ('Th', 'is', ' is a sample string')
+
+12. s.replace(old, new[, count]):
+    Replaces occurrences of old substring with new substring.
+    Examples:
+      s.replace("sample", "test") -> 'This is a test string'
+      s.replace("is", "was")      -> 'Thwas was a sample string'
+
+13. Case Conversions:
+    - s.swapcase(): Inverts case of each character.
+      "This is a test string".swapcase() -> 'tHIS IS A TEST STRING'
+    - s.title(): Capitalizes the first character of each word.
+      "This is a test string".title()    -> 'This Is A Test String'
+
+
+--------------------------------------------------------------------------------
+5. LIST OPERATIONS AND ALGORITHMS
+--------------------------------------------------------------------------------
+
+[1] Standard List Operations & Methods
+--------------------------------------
+Method                   Description & Example
+--------------------------------------------------------------------------------
+Creation                 subjects = ['COA', 'Python', 'DBMS', 'DM', 'C', 'Statistics', 'Soft Skills']
+len(l)                   Returns number of items: len(subjects) -> 7
+l.append(item)           Adds item to end: subjects.append('Python')
+l.insert(index, item)    Inserts item at index: subjects.insert(2, 'Statistics')
+l.count(item)            Counts occurrences: subjects.count('Statistics')
+l.remove(item)           Removes first matching value: subjects.remove('C')
+l.pop(index)             Removes and returns item at index: subjects.pop(2)
+l.index(item)            Returns index of first matching value: subjects.index('DBMS')
+l.reverse()              Reverses list in-place: subjects.reverse()
+l.sort()                 Sorts list elements in ascending order in-place: subjects.sort()
+l.copy()                 Creates a shallow independent copy: updated = subjects.copy()
+--------------------------------------------------------------------------------
+
+List Indexing & Aliasing Rules (from Practical Sheets):
+- Positive Indexing: 0, 1, 2, ...
+- Negative Indexing: -1 (last), -2 (second last), ...
+- Slicing: `subjects[1:3]` (extracts indices 1 and 2).
+- Reference Aliasing vs Copy:
+  * `FYsubjects = subjects` creates an alias pointing to the same list in memory.
+    Modifying `subjects` changes `FYsubjects`!
+  * `updated = subjects.copy()` creates an independent copy. Modifying `subjects`
+    does NOT alter `updated`.
+
+
+[2] Python List Programming Logic (from Practical Sheet 2)
+----------------------------------------------------------
+
+1. Calculate sum of all elements in a list using a loop:
+   numbers = [10, 20, 30, 40, 50]
+   total = 0
+   for num in numbers:
+       total += num
+   print("Sum of list:", total)
+
+2. Remove all duplicates from a list:
+   items = [1, 2, 2, 3, 4, 4, 5]
+   unique_items = []
+   for item in items:
+       if item not in unique_items:
+           unique_items.append(item)
+   print("Updated list:", unique_items)
+
+3. Find the second largest number in a list without calling max() twice:
+   numbers = [12, 45, 2, 41, 31, 10, 45]
+   largest = float('-inf')
+   second_largest = float('-inf')
+   for num in numbers:
+       if num > largest:
+           second_largest = largest
+           largest = num
+       elif num > second_largest and num != largest:
+           second_largest = num
+   print("Second largest number:", second_largest)
+
+4. Reverse elements of a list using both reverse() and slicing:
+   lst = [1, 2, 3, 4, 5]
+   # Using slicing:
+   rev_slice = lst[::-1]
+   # Using reverse():
+   lst.reverse()
+
+5. Remove all odd numbers from a list:
+   numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+   even_numbers = [num for num in numbers if num % 2 == 0]
+   print("List without odd numbers:", even_numbers)
+
+6. Common elements between two lists using list comprehension:
+   list1 = [1, 2, 3, 4, 5]
+   list2 = [4, 5, 6, 7, 8]
+   common = [item for item in list1 if item in list2]
+   print("Common elements:", common)
+
+7. Manual Bubble Sort in ascending order:
+   arr = [64, 34, 25, 12, 22, 11, 90]
+   n = len(arr)
+   for i in range(n):
+       for j in range(0, n - i - 1):
+           if arr[j] > arr[j + 1]:
+               # Swap elements
+               arr[j], arr[j + 1] = arr[j + 1], arr[j]
+   print("Sorted list:", arr)
+
+8. Split list into two lists (even and odd):
+   numbers = [10, 15, 22, 33, 40, 55]
+   evens = [x for x in numbers if x % 2 == 0]
+   odds = [x for x in numbers if x % 2 != 0]
+
+
+--------------------------------------------------------------------------------
+6. BASIC PROGRAMMING LOGIC
+--------------------------------------------------------------------------------
+
+[1] Geometric Calculations
+--------------------------
+import math
+
+1. Rectangle Area & Perimeter:
+   length = float(input("Enter length: "))
+   breadth = float(input("Enter breadth: "))
+   area_rect = length * breadth
+   perimeter_rect = 2 * (length + breadth)
+
+2. Circle Area & Perimeter (Circumference):
+   radius = float(input("Enter radius: "))
+   area_circle = math.pi * (radius ** 2)
+   perimeter_circle = 2 * math.pi * radius
+
+3. Triangle Area:
+   base = float(input("Enter base: "))
+   height = float(input("Enter height: "))
+   area_triangle = 0.5 * base * height
+
+
+[2] Swapping Variables
+----------------------
+1. With a third variable:
+   a = 10
+   b = 20
+   temp = a
+   a = b
+   b = temp
+
+2. Without a third variable (Python tuple unpacking):
+   a = 10
+   b = 20
+   a, b = b, a
+
+   # Alternative arithmetic swapping:
+   # a = a + b
+   # b = a - b
+   # a = a - b
+
+
+[3] Distance Formula
+--------------------
+Formula from Syllabus:
+    D² = (x1 - x2)² + (y1 - y2)²
+    D  = √[ (x1 - x2)² + (y1 - y2)² ]
+
+Python Code (Exact presentation test case):
+    import math
+
+    x1 = 4
+    x2 = 7
+    y1 = -3
+    y2 = 6
+
+    d = math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+    print("Distance:", d)
+    # Output: 9.486832980505138
+
+
+[4] Mathematical Expression Evaluation (Exact Presentation Test Case)
+---------------------------------------------------------------------
+Test Inputs from Syllabus:
+    a = 12
+    b = 56
+    c = 34
+
+Expressions and Verified Outputs:
+    1. a * (b + c)         -> 12 * (56 + 34)           = 1080
+    2. a + (b * c)         -> 12 + (56 * 34)           = 1916
+    3. (a * b) + (a * c)   -> (12 * 56) + (12 * 34)     = 1080
+    4. (a + b) * (a + c)   -> (12 + 56) * (12 + 34)     = 3128
+    5. (a - b) * (b - c) * (a - c)
+                           -> (-44) * (22) * (-22)      = 21296
+    6. (a + b) / c         -> (12 + 56) / 34            = 2.0
+    7. (a + b) // c        -> (12 + 56) // 34           = 2
+    8. (a + b) / c - b * b -> 2.0 - (56 * 56)           = -3134.0
+
+
+[5] Factorial, Fibonacci, and Prime Verification
+------------------------------------------------
+1. Factorial of a Number:
+   def calculate_factorial(n):
+       if n < 0:
+           return "Invalid input"
+       fact = 1
+       for i in range(1, n + 1):
+           fact *= i
+       return fact
+
+2. Fibonacci Sequence (First n terms):
+   def generate_fibonacci(n):
+       a, b = 0, 1
+       series = []
+       for _ in range(n):
+           series.append(a)
+           a, b = b, a + b
+       return series
+
+3. Prime Number Verification:
+   def is_prime(num):
+       if num <= 1:
+           return False
+       for i in range(2, int(math.sqrt(num)) + 1):
+           if num % i == 0:
+               return False
+       return True
+
+
+[6] Electric Bill Calculation (Tiered Rate Logic)
+-------------------------------------------------
+Rate Slab Specifications from Practical Sheet 1:
+--------------------------------------------------------------------------------
+Consumption in Units | Rate of Charge
+---------------------+----------------------------------------------------------
+0 - 200 units        | Rs. 0.50 per unit
+201 - 400 units      | Rs. 100 plus 0.65 per unit in excess of 200
+401 - 600 units      | Rs. 230 plus 0.80 per unit in excess of 400
+Above 600 units      | Rs. 425 plus 1.25 per unit in excess of 600
+--------------------------------------------------------------------------------
+
+Python Implementation:
+    def calculate_electric_bill(units):
+        if units <= 200:
+            bill = units * 0.50
+        elif units <= 400:
+            bill = 100 + (units - 200) * 0.65
+        elif units <= 600:
+            bill = 230 + (units - 400) * 0.80
+        else:
+            bill = 425 + (units - 600) * 1.25
+        return bill
+
+
+[7] Menu-Driven Program Loop (Practical Sheet 1)
+------------------------------------------------
+Complete Menu-Driven Program with While Loop:
+    while True:
+        print("\n--- MENU ---")
+        print("1. Positive or Negative or Zero")
+        print("2. Even or Odd")
+        print("3. Factorial of the number")
+        print("4. Factors of the number")
+        print("5. Is the number Prime")
+        print("6. Exit")
+        
+        choice = int(input("Enter your choice (1-6): "))
+        if choice == 6:
+            print("Exiting program.")
+            break
+            
+        num = int(input("Enter the number: "))
+        
+        if choice == 1:
+            if num > 0:
+                print(f"{num} is Positive.")
+            elif num < 0:
+                print(f"{num} is Negative.")
+            else:
+                print("The number is Zero.")
+                
+        elif choice == 2:
+            if num % 2 == 0:
+                print(f"{num} is Even.")
+            else:
+                print(f"{num} is Odd.")
+                
+        elif choice == 3:
+            if num < 0:
+                print("Factorial does not exist for negative numbers.")
+            else:
+                print(f"Factorial of {num} is {math.factorial(num)}.")
+                
+        elif choice == 4:
+            factors = [i for i in range(1, num + 1) if num % i == 0]
+            print(f"Factors of {num}: {factors}")
+            
+        elif choice == 5:
+            if is_prime(num):
+                print(f"{num} is a Prime number.")
+            else:
+                print(f"{num} is not a Prime number.")
+        else:
+            print("Invalid choice! Please choose between 1 and 6.")
+
+================================================================================

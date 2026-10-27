@@ -1,0 +1,221 @@
+================================================================================
+                    PANDAS: SORTING AND AGGREGATIONS
+================================================================================
+Reference Manual: Python Data Science Syllabus
+Topic: sort_values, Aggregate Functions, .agg(), groupby(), 
+       Correlation (r), and Covariance (Cov)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. SORTING: sort_values()
+--------------------------------------------------------------------------------
+
+Syntax:
+    df.sort_values(by, ascending=True, inplace=False, ignore_index=False)
+
+Parameters:
+- by: Column name (str) or list of column names [list of str] to sort by.
+- ascending: Bool or list of bools. True for ascending, False for descending. Default is True.
+- inplace: Bool. If True, modifies DataFrame in-place and returns None. Default is False.
+- ignore_index: Bool. If True, resets the resulting index to 0, 1, 2, ... Default is False.
+
+Examples from Syllabus:
+    import pandas as pd
+
+    df = pd.DataFrame({
+        'EmpID': [101, 102, 103, 104, 105],
+        'EName': ['Kush', 'Ruchika', 'Divya', 'John', 'Amit'],
+        'Years Experience': [10, 0, 7, 2, 20],
+        'Previous employers': [4, 0, 6, 1, 2],
+        'Salary': [50000, 12000, 20000, 25000, 95000]
+    })
+
+    # 1. Single Column Sort Descending:
+    dfS = df.sort_values(['Years Experience'], ascending=[False])
+
+    # 2. Multi-Column Sort with Mixed Orders and Reset Index:
+    dfS1 = df.sort_values(
+        ['Years Experience', 'Previous employers'], 
+        ascending=[True, False], 
+        ignore_index=True
+    )
+
+    # 3. Descending order of Salary:
+    df_salary_desc = df.sort_values(by='Salary', ascending=False)
+
+    # 4. Alphabetical order of EName:
+    df_name_asc = df.sort_values(by='EName', ascending=True)
+
+
+--------------------------------------------------------------------------------
+2. AGGREGATION FUNCTIONS
+--------------------------------------------------------------------------------
+
+[1] Standard Aggregation Methods
+--------------------------------
+Method                   Description
+--------------------------------------------------------------------------------
+df.sum()                 Sum of values across numerical columns.
+df.mean()                Arithmetic mean (average) of numerical values.
+df.min()                 Minimum value in the column/dataset.
+df.max()                 Maximum value in the column/dataset.
+df.count()               Count of non-null (non-NA) entries.
+df.median()              Median (50th percentile) value.
+df.std()                 Standard deviation.
+df.value_counts()        Frequency count of unique values in a Series.
+df.dtypes.value_counts() Frequency count of each data type across columns.
+--------------------------------------------------------------------------------
+
+
+[2] Multiple Aggregations via .agg()
+-----------------------------------
+Syntax:
+    df['Column'].agg(['func1', 'func2', ...])
+    df.agg(New_Column_Name=('Source_Column', 'aggregation_function'))
+
+Examples from Syllabus:
+    # 1. Total salary and average salary:
+    print(df['Salary'].agg(['sum', 'mean']))
+
+    # 2. Minimum salary and maximum salary:
+    print(df['Salary'].agg(['min', 'max']))
+
+    # 3. Total years of experience and average experience:
+    print(df['Experience'].agg(['sum', 'mean']))
+
+    # 4. Count total number of employees:
+    print(df['EmpID'].agg('count'))
+
+    # 5. Conditional Aggregation on Filtered Subsets:
+    # Employee count where Experience > 5:
+    print(df[df['Experience'] > 5].agg(Employee_Count=('EmpID', 'count')))
+
+    # Total salary where Experience > 5:
+    print(df[df['Experience'] > 5].agg(Total_Salary=('Salary', 'sum')))
+
+    # Average salary for IT department employees:
+    print(df[df['Department'] == 'IT'].agg(Average_Salary=('Salary', 'mean')))
+
+
+--------------------------------------------------------------------------------
+3. GROUPBY: df.groupby()
+--------------------------------------------------------------------------------
+Syntax:
+    df.groupby('Grouping_Column').agg(
+        Output_Name=('Source_Column', 'agg_func'),
+        ...
+    )
+
+Syllabus Examples & Queries:
+    # 1. Count employees and total salary per department:
+    print(df.groupby('Department').agg(
+        Employee_Count=('EmpID', 'count'),
+        Total_Salary=('Salary', 'sum')
+    ))
+
+    # 2. Average salary, lowest salary, and highest salary department-wise:
+    print(df.groupby('Department').agg(
+        Average_Salary=('Salary', 'mean'),
+        Minimum_Salary=('Salary', 'min'),
+        Maximum_Salary=('Salary', 'max')
+    ))
+
+    # 3. Average experience and total experience in each department:
+    print(df.groupby('Department').agg(
+        Average_Experience=('Experience', 'mean'),
+        Total_Experience=('Experience', 'sum')
+    ))
+
+    # 4. Maximum experience in each department:
+    print(df.groupby('Department').agg(
+        Maximum_Experience=('Experience', 'max')
+    ))
+
+    # 5. Total salary and total experience department-wise in a single GroupBy:
+    print(df.groupby('Department').agg(
+        Total_Salary=('Salary', 'sum'),
+        Total_Experience=('Experience', 'sum')
+    ))
+
+    # 6. Comprehensive 7-Metric GroupBy Summary:
+    print(df.groupby('Department').agg(
+        Employee_Count=('EmpID', 'count'),
+        Salary_Sum=('Salary', 'sum'),
+        Salary_Mean=('Salary', 'mean'),
+        Salary_Min=('Salary', 'min'),
+        Salary_Max=('Salary', 'max'),
+        Experience_Sum=('Experience', 'sum'),
+        Experience_Mean=('Experience', 'mean')
+    ))
+
+    # 7. Post-GroupBy Filtering:
+    # Departments whose average salary is greater than 60,000:
+    avg_salary = df.groupby('Department').agg(Average_Salary=('Salary', 'mean'))
+    print(avg_salary[avg_salary['Average_Salary'] > 60000])
+
+    # 8. Finding Extreme Group Index:
+    # Department that has the highest total salary expenditure:
+    dept_salary = df.groupby('Department').agg(Total_Salary=('Salary', 'sum'))
+    print(dept_salary['Total_Salary'].idxmax())
+
+
+--------------------------------------------------------------------------------
+4. STATISTICS: CORRELATION AND COVARIANCE
+--------------------------------------------------------------------------------
+
+[1] Theoretical Concepts & Comparison
+-------------------------------------
+- Covariance and correlation are both measures of the relationship between two variables,
+  but have distinct differences in terms of interpretation, scale, and application:
+  * Covariance: Measures the directional relationship between two variables. 
+    Scale depends on units of measurement (unbounded from -infinity to +infinity).
+  * Correlation: Measures both strength and direction of linear association. 
+    Standardized and dimensionless, strictly bounded between -1.0 and +1.0.
+
+
+[2] Mathematical Formulas (Exact Presentation Matching)
+-------------------------------------------------------
+
+Pearson's Correlation Coefficient (r):
+
+                      n(∑xy) - (∑x)(∑y)
+    r = ---------------------------------------------
+        √[ n∑x² - (∑x)² ] [ n∑y² - (∑y)² ]
+
+    Where:
+      n   = Total number of paired observations
+      ∑x  = Sum of x values
+      ∑y  = Sum of y values
+      ∑xy = Sum of products of paired values x and y
+      ∑x² = Sum of squared x values
+      ∑y² = Sum of squared y values
+
+
+Covariance Formula:
+
+                 ∑(xᵢ - x̄)(yᵢ - ȳ)
+    Cov(x, y) = -------------------
+                         N
+
+    Where:
+      xᵢ = Value of x for observation i
+      x̄  = Mean of variable x
+      yᵢ = Value of y for observation i
+      ȳ  = Mean of variable y
+      N  = Total number of observations
+
+
+[3] Python Code: df.corr() and df.cov()
+---------------------------------------
+Examples from Syllabus:
+    import pandas as pd
+
+    # Calculate correlation matrix between specific columns:
+    corr_matrix = df[['Years Experience', 'Previous employers']].corr()
+    print("Correlation:\n", corr_matrix)
+
+    # Calculate covariance matrix between specific columns:
+    cov_matrix = df[['Years Experience', 'Previous employers']].cov()
+    print("Covariance:\n", cov_matrix)
+
+================================================================================

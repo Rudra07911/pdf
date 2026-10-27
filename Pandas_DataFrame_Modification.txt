@@ -1,0 +1,265 @@
+================================================================================
+                 PANDAS: DATAFRAME MODIFICATION AND COMBINING
+================================================================================
+Reference Manual: Python Data Science Syllabus
+Topic: Structural Modification (insert, drop, rename, set_index, reset_index)
+       and Combining DataFrames (pd.concat, pd.merge, join)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. COLUMN INSERTION: df.insert() AND ASSIGNMENT
+--------------------------------------------------------------------------------
+
+[1] df.insert() Method
+----------------------
+Syntax:
+    df.insert(loc, column, value, allow_duplicates=False)
+
+Parameters:
+- loc: Integer position (0-based) where the new column will be placed.
+- column: Name of the new column (string or number).
+- value: Scalar value, Series, NumPy array, or list matching DataFrame length.
+
+Use Cases & Syllabus Examples:
+1. Static Values:
+   import pandas as pd
+   import numpy as np
+
+   # Insert a boolean constant column at column index 3:
+   df.insert(3, 'Applied', True)
+
+   # Insert a 1-based serial number array at the very beginning (index 0):
+   df.insert(0, 'Sno', np.arange(1, len(df) + 1))
+
+2. Values Set Based on Condition (List Comprehensions):
+   # Insert column with 'Y' or 'N' based on Years Experience at column index 1:
+   df.insert(1, 'Experienced?', ['Y' if exp > 0 else 'N' for exp in df['Years Experience']])
+
+3. Calculated Values from Existing Columns:
+   # Insert average employment duration per previous employer at column index 4:
+   df.insert(4, 'Avg Emp', df['Years Experience'] / df['Previous employers'])
+
+
+[2] Direct Column Assignment (Bracket Notation)
+-----------------------------------------------
+Appends the column to the end of the DataFrame:
+- Add column with 5% of salary:
+  df['Commission'] = df['Salary'] * 0.05
+
+- Add sum of two scores:
+  df['Total'] = df['Score1'] + df['Score2']
+
+- Add list of values:
+  df['Activity'] = ['Swimming', 'Dancing', 'Cricket', 'Singing']
+
+- Assigning a NumPy array:
+  df['test'] = np.arange(11, 24)
+
+
+--------------------------------------------------------------------------------
+2. DELETION: df.drop()
+--------------------------------------------------------------------------------
+
+Syntax:
+    df.drop(labels=None, axis=0, index=None, columns=None, inplace=False)
+
+Parameters:
+- labels: Single label or list of labels to delete.
+- axis: 0 for rows / index; 1 for columns.
+  * (label, axis=0) is equivalent to index=row_labels
+  * (label, axis=1) is equivalent to columns=col_names
+- index: Explicitly specifies row labels to delete.
+- columns: Explicitly specifies column names to delete.
+- inplace:
+  * If True: Modifies the original DataFrame directly and returns None.
+  * If False (default): Leaves the original DataFrame untouched and returns a new DataFrame.
+
+Examples from Syllabus:
+1. Dropping Columns:
+   # Drop using labels and axis=1:
+   df.drop(['test'], axis=1, inplace=True)
+
+   # Drop using explicit columns parameter:
+   df.drop(columns=['Cabin'], inplace=True)
+   df.drop(columns=['test'])
+
+2. Dropping Rows:
+   # Drop row by index label 6:
+   df.drop([6], axis=0, inplace=True)
+   df.drop(index=[6], inplace=True)
+
+
+--------------------------------------------------------------------------------
+3. RENAMING LABELS: df.rename()
+--------------------------------------------------------------------------------
+
+Syntax:
+    df.rename(mapper=None, index=None, columns=None, axis=None, 
+              inplace=False, errors='ignore')
+
+Parameters:
+- mapper: Dictionary {old_label: new_label}. Must be used together with axis.
+- axis: 0 for rows; 1 for columns.
+  * (mapper, axis=0) is equivalent to index=dict
+  * (mapper, axis=1) is equivalent to columns=dict
+- index: Dictionary {old_row_label: new_row_label}.
+- columns: Dictionary {old_col_name: new_col_name}.
+- inplace: If True, modifies in-place; if False, returns a new DataFrame.
+- errors:
+  * 'ignore' (default): Does not raise error if specified label does not exist.
+  * 'raise': Raises KeyError if a specified label is not found in the DataFrame.
+
+Examples from Syllabus:
+    # 1. Rename row label 5 to 55 along axis 0:
+    df.rename(mapper={5: 55}, axis=0, inplace=True)
+
+    # 2. Rename column using columns parameter:
+    df.rename(columns={"Level of Education": "Qualification"}, inplace=True)
+
+    # 3. Rename with errors='raise' (raises KeyError if label 500 is missing):
+    df.rename(mapper={500: 550}, axis=0, inplace=True, errors='raise')
+
+
+--------------------------------------------------------------------------------
+4. INDEX MANIPULATION: df.set_index() AND df.reset_index()
+--------------------------------------------------------------------------------
+
+[1] df.set_index()
+------------------
+Syntax:
+    df.set_index(keys, inplace=False, drop=True)
+
+Role of the drop Parameter:
+- drop=True (default): Deletes the column(s) from the DataFrame after turning them into index labels.
+  Example: DataFrame with 5 columns becomes 4 columns after set_index.
+- drop=False: Retains the column(s) inside the DataFrame while ALSO setting them as index labels.
+  Example: DataFrame with 5 columns maintains shape (4, 5).
+
+Example from Syllabus:
+    df.set_index(['Roll No'], inplace=True, drop=False)
+    print(df.shape)  # Remains (4, 5) because drop=False preserves the column.
+
+
+[2] df.reset_index()
+--------------------
+Syntax:
+    df.reset_index(drop=False, inplace=False)
+
+Role of the drop Parameter:
+- drop=False (default): The existing index is inserted back as a regular column in the DataFrame, 
+  and the index is reset to 0, 1, 2, ...
+- drop=True: The existing index is completely discarded and removed; index resets to 0, 1, 2, ...
+
+Example from Syllabus:
+    df_sorted = df.sort_values(by='Salary', ascending=False)
+
+    # 1. Reset index and keep old index as a column:
+    df_with_old_index = df_sorted.reset_index(drop=False)
+
+    # 2. Reset index and discard old index:
+    df_clean_index = df_sorted.reset_index(drop=True)
+
+
+--------------------------------------------------------------------------------
+5. COMBINING DATAFRAMES: pd.concat, pd.merge, AND join
+--------------------------------------------------------------------------------
+
+[1] pd.concat() - Concatenating DataFrames
+-----------------------------------------
+1. Row-wise Concatenation (axis=0, default):
+   Stacks DataFrames vertically.
+   Syntax:
+     new_df = pd.concat([df1, df2], ignore_index=True)
+
+   Role of ignore_index:
+   - ignore_index=True: Resets the row index in the combined DataFrame to 0, 1, 2...
+   - ignore_index=False: Preserves original index labels from df1 and df2.
+
+   Example from Syllabus:
+     import pandas as pd
+
+     data1 = [{'Roll No': 101, 'SAP ID': 500123, 'First Name': 'Aditya'},
+              {'Roll No': 102, 'SAP ID': 500124, 'First Name': 'Aarav'}]
+     data2 = [{'Roll No': 103, 'SAP ID': 500125, 'First Name': 'Advik'},
+              {'Roll No': 104, 'SAP ID': 500126, 'First Name': 'Akshay'}]
+
+     df1 = pd.DataFrame(data1, index=[11, 22])
+     df2 = pd.DataFrame(data2, index=[33, 44])
+
+     # Row-wise concatenation:
+     new_df = pd.concat([df1, df2], ignore_index=True)
+     print(new_df)
+
+2. Column-wise Concatenation (axis=1):
+   Stacks DataFrames horizontally.
+   Syntax:
+     col_df = pd.concat([df1, df2], axis=1)
+
+3. df.join() Method:
+   Joins columns of another DataFrame based on index.
+   Syntax:
+     joined_df = df1.join(df2, how="inner")
+
+
+[2] pd.merge() - Relational Database Joins
+------------------------------------------
+Syntax:
+    merged_df = pd.merge(left, right, on='key_column', how='inner')
+
+Parameters:
+- left, right: The two DataFrames to combine.
+- on: The common key column present in both DataFrames.
+- how: Join method ('inner', 'left', 'right', 'outer').
+
+The 4 Join Types (Exact Syllabus Definitions):
+--------------------------------------------------------------------------------
+Join Type | Description                                 | Unmatched Rows
+----------+---------------------------------------------+-----------------------
+inner     | Only matching records in BOTH DataFrames    | Completely excluded
+left      | All records from left + matches from right  | Right filled with NaN
+right     | All records from right + matches from left  | Left filled with NaN
+outer     | All records from both DataFrames            | Either side gets NaN
+--------------------------------------------------------------------------------
+
+Syllabus Comparison Matrix (Employees vs Salaries):
+--------------------------------------------------------------------------------
+Join Type | Includes All Employees? | Includes All Salaries? | Result Size
+----------+-------------------------+------------------------+------------------
+inner     | No                      | No                     | Matching rows only
+left      | Yes                     | No                     | All left rows
+right     | No                      | Yes                    | All right rows
+outer     | Yes                     | Yes                    | Full combined set
+--------------------------------------------------------------------------------
+
+Complete Working Example from Syllabus:
+    import pandas as pd
+
+    df1 = pd.DataFrame({
+        'ID': [1, 20, 3],
+        'Name': ['Alice', 'Bob', 'Charlie'],
+        'Age': [24, 27, 22]
+    })
+
+    df2 = pd.DataFrame({
+        'ID': [1, 2, 4, 3],
+        'Salary': [50000, 60000, 55000, 5000],
+        'Department': ['HR', 'IT', 'Finance', 'Marketing']
+    })
+
+    # 1. Inner Merge (only IDs 1 and 3):
+    m_inner = pd.merge(df1, df2, on='ID', how='inner')
+    print("Inner Merge:\n", m_inner)
+
+    # 2. Left Merge (IDs 1, 20, 3; ID 20 gets NaN for Salary & Department):
+    m_left = pd.merge(df1, df2, on='ID', how='left')
+    print("Left Merge:\n", m_left)
+
+    # 3. Right Merge (IDs 1, 2, 4, 3; IDs 2 and 4 get NaN for Name & Age):
+    m_right = pd.merge(df1, df2, on='ID', how='right')
+    print("Right Merge:\n", m_right)
+
+    # 4. Outer Merge (IDs 1, 20, 3, 2, 4 with NaNs where no match):
+    m_outer = pd.merge(df1, df2, on='ID', how='outer')
+    print("Outer Merge:\n", m_outer)
+
+================================================================================

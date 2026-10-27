@@ -1,0 +1,494 @@
+================================================================================
+                    FILE 1: DATA FRAMES AND FILE I/O
+================================================================================
+Reference Manual: Python Data Science Syllabus
+Topic: Pandas DataFrame Creation, Basic Inspection, Python CSV Module, & Pandas I/O
+================================================================================
+
+--------------------------------------------------------------------------------
+1. INTRODUCTION TO PANDAS DATAFRAMES
+--------------------------------------------------------------------------------
+- Pandas is built on top of NumPy and provides data structures and functions designed 
+  to work with structured or tabular data.
+- DataFrame: A two-dimensional, labeled data structure with columns of potentially 
+  different types. It is similar to a spreadsheet or SQL table, allowing for easy 
+  manipulation, filtering, grouping, and analysis of data.
+  * Rows: Each row represents a single observation or record.
+  * Columns: Each column represents a variable or feature.
+  * Index: Each row and column is labeled with an index, allowing for easy access 
+    and manipulation of data.
+  * Data Types: Different columns can have different data types (e.g., int64, 
+    float64, object/string).
+- Series: A one-dimensional labeled array capable of holding any data type. Series 
+  are the fundamental building blocks of DataFrames.
+
+
+--------------------------------------------------------------------------------
+2. DATAFRAME CREATION: THE 4 SPECIFIC METHODS
+--------------------------------------------------------------------------------
+
+[Method 1] From a Dictionary of Lists
+-------------------------------------
+Syntax:
+    pd.DataFrame(data, columns=..., index=..., dtype=...)
+
+Example:
+    import pandas as pd
+
+    data = {
+        'Roll No': [101, 102, 103, 104],
+        'SAP ID': [500123, 500124, 500125, 500126],
+        'First Name': ['Aditya', 'Aarav', 'Advik', 'Akshay'],
+        'Last Name': ['Gupta', 'Patel', 'Shah', 'Singh'],
+        'Area': ['Dadar', 'Andheri', 'Bandra', 'Colaba']
+    }
+
+    df1 = pd.DataFrame(data)
+    print(df1)
+
+Output:
+       Roll No  SAP ID First Name Last Name     Area
+    0      101  500123     Aditya     Gupta    Dadar
+    1      102  500124      Aarav     Patel  Andheri
+    2      103  500125      Advik      Shah   Bandra
+    3      104  500126     Akshay     Singh   Colaba
+
+
+[Method 2] From a List of Lists
+-------------------------------
+Syntax:
+    pd.DataFrame(data, columns=[...], index=[...])
+
+Example:
+    import pandas as pd
+
+    data = [
+        [101, 500123, 'Aditya', 'Gupta', 'Dadar'],
+        [102, 500124, 'Aarav', 'Patel', 'Andheri'],
+        [103, 500125, 'Advik', 'Shah', 'Bandra'],
+        [104, 500126, 'Akshay', 'Singh', 'Colaba']
+    ]
+
+    df2 = pd.DataFrame(data, columns=['Roll No', 'SAP ID', 'First Name', 'Last Name', 'Area'])
+    print(df2)
+
+Output:
+       Roll No  SAP ID First Name Last Name     Area
+    0      101  500123     Aditya     Gupta    Dadar
+    1      102  500124      Aarav     Patel  Andheri
+    2      103  500125      Advik      Shah   Bandra
+    3      104  500126     Akshay     Singh   Colaba
+
+
+[Method 3] From a List of Dictionaries
+--------------------------------------
+Syntax:
+    pd.DataFrame(data, columns=..., index=...)
+
+Example:
+    import pandas as pd
+
+    data = [
+        {'Roll No': 101, 'SAP ID': 500123, 'First Name': 'Aditya', 'Last Name': 'Gupta', 'Area': 'Dadar'},
+        {'Roll No': 102, 'SAP ID': 500124, 'First Name': 'Aarav', 'Last Name': 'Patel', 'Area': 'Andheri'},
+        {'Roll No': 103, 'SAP ID': 500125, 'First Name': 'Advik', 'Last Name': 'Shah', 'Area': 'Bandra'},
+        {'Roll No': 104, 'SAP ID': 500126, 'First Name': 'Akshay', 'Last Name': 'Singh', 'Area': 'Colaba'}
+    ]
+
+    df3 = pd.DataFrame(data)
+    print(df3)
+
+Output:
+       Roll No  SAP ID First Name Last Name     Area
+    0      101  500123     Aditya     Gupta    Dadar
+    1      102  500124      Aarav     Patel  Andheri
+    2      103  500125      Advik      Shah   Bandra
+    3      104  500126     Akshay     Singh   Colaba
+
+
+[Method 4] From a 2D NumPy Array
+--------------------------------
+Syntax:
+    pd.DataFrame(data, columns=[...], index=[...], dtype=...)
+
+Example:
+    import pandas as pd
+    import numpy as np
+
+    data = np.array([
+        [101, 500123, 'Aditya', 'Gupta', 'Dadar'],
+        [102, 500124, 'Aarav', 'Patel', 'Andheri'],
+        [103, 500125, 'Advik', 'Shah', 'Bandra'],
+        [104, 500126, 'Akshay', 'Singh', 'Colaba']
+    ])
+
+    df4 = pd.DataFrame(data, columns=['Roll No', 'SAP ID', 'First Name', 'Last Name', 'Area'])
+    print(df4)
+
+Output:
+      Roll No  SAP ID First Name Last Name     Area
+    0     101  500123     Aditya     Gupta    Dadar
+    1     102  500124      Aarav     Patel  Andheri
+    2     103  500125      Advik      Shah   Bandra
+    3     104  500126     Akshay     Singh   Colaba
+
+
+[Attributes Used During Creation]
+---------------------------------
+1. columns:
+   - Used to select a subset of columns from a dictionary:
+     df = pd.DataFrame(data, columns=['Roll No', 'SAP ID'])
+   - Used to specify column names for 2D lists and NumPy arrays:
+     df = pd.DataFrame(data, columns=['Col1', 'Col2', 'Col3'])
+   - If a specified column name does not exist in the dictionary, Pandas fills it with NaN:
+     df = pd.DataFrame([{'a': 1, 'b': 2}, {'a': 5, 'b': 10}], columns=['a', 'b1'])
+     # Column 'b1' will contain NaN values.
+
+2. index:
+   - Used to specify custom row labels:
+     df = pd.DataFrame(data, index=[0, 2, 1, 4])
+     # Sets custom integer or string labels for rows.
+
+3. dtype:
+   - Used to force a specific data type for the DataFrame values:
+     df = pd.DataFrame(data, dtype=float)
+
+
+--------------------------------------------------------------------------------
+3. BASIC INFORMATION ATTRIBUTES AND METHODS
+--------------------------------------------------------------------------------
+
+1. df.head(n=5)
+   - Returns the first n rows of the DataFrame (default is 5 rows).
+   - Example:
+     df.head(2)
+
+2. df.tail(n=5)
+   - Returns the last n rows of the DataFrame (default is 5 rows).
+   - Example:
+     df.tail(2)
+
+3. df.info()
+   - Prints a concise summary of the DataFrame: class type, index range, total columns,
+     column names, non-null counts, data types (dtypes), and memory usage.
+   - Example:
+     df.info()
+
+4. df.describe()
+   - Generates descriptive statistics for numerical columns: count, mean, std, min,
+     25%, 50% (median), 75%, and max.
+   - Example:
+     df.describe()
+
+5. df.shape
+   - Returns a tuple representing the dimensionality of the DataFrame: (num_rows, num_columns).
+   - Example:
+     print(df.shape)  # e.g., (4, 5)
+
+6. df.columns
+   - Returns the column labels of the DataFrame as an Index object.
+   - Example:
+     print(df.columns)
+     # Index(['Roll No', 'SAP ID', 'First Name', 'Last Name', 'Area'], dtype='object')
+
+7. df.index
+   - Returns the index (row labels) of the DataFrame.
+   - Example:
+     print(df.index)
+     # RangeIndex(start=0, stop=4, step=1) or Index([0, 2, 1, 4], dtype='int64')
+
+8. df.dtypes
+   - Returns a Series with the data type of each column.
+   - Example:
+     print(df.dtypes)
+     # Roll No        int64
+     # SAP ID         int64
+     # First Name    object
+     # Last Name     object
+     # Area          object
+     # dtype: object
+
+9. df.select_dtypes(include=None, exclude=None)
+   - Returns a subset of the DataFrame's columns based on column dtypes.
+   - Examples:
+     # Include only object (string/categorical) columns:
+     df_obj = df.select_dtypes(include="object")
+
+     # Exclude numerical (int64) columns:
+     df_no_int = df.select_dtypes(exclude="int64")
+
+     # Exclude object columns:
+     df_num = df.select_dtypes(exclude="object")
+
+10. unique() & np.unique()
+    - Returns unique values of a column (Series or array).
+    - Examples:
+      # Pandas unique method on a Series:
+      unique_areas = df['Area'].unique()
+
+      # NumPy unique function on a Series:
+      unique_areas_np = np.unique(df['Area'])
+
+
+--------------------------------------------------------------------------------
+4. PYTHON CSV MODULE FILE HANDLING
+--------------------------------------------------------------------------------
+
+[1] csv.writer - Writing Rows using Lists
+-----------------------------------------
+- csv.writer(file, delimiter=','): Returns a writer object responsible for converting 
+  the user's data into delimited strings on the given file-like object.
+- writer.writerow(row): Writes a single row (1D list).
+- writer.writerows(rows): Writes multiple rows (list of lists).
+
+Example:
+    import csv
+
+    data = [
+        ['Name', 'Age', 'City'],
+        ['Arya', '28', 'Mumbai'],
+        ['Ravi', '35', 'Delhi'],
+        ['Priya', '32', 'Bangalore']
+    ]
+
+    with open('example.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(data)
+    print("Data has been written to 'example.csv'.")
+
+
+[2] csv.reader - Reading CSV Rows as Lists
+------------------------------------------
+- csv.reader(file, delimiter=','): Returns a reader object which iterates over lines 
+  in the given CSV file, parsing each line into a list of fields.
+
+Example:
+    import csv
+
+    with open('example.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            print(row)
+
+Output:
+    ['Name', 'Age', 'City']
+    ['Arya', '28', 'Mumbai']
+    ['Ravi', '35', 'Delhi']
+    ['Priya', '32', 'Bangalore']
+
+
+[3] Appending Data to an Existing CSV File
+------------------------------------------
+- Open file in append mode ('a').
+- Use writer.writerow(new_data).
+
+Example:
+    import csv
+
+    new_data = ['Amit', '40', 'Kolkata']
+    with open('example.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(new_data)
+    print("New data has been appended to 'example.csv'.")
+
+
+[4] Writing with a Custom Delimiter
+-----------------------------------
+- Specify the delimiter parameter in csv.writer and csv.reader (e.g., delimiter='|').
+
+Example:
+    import csv
+
+    data = [
+        ['Name', 'Age', 'City'],
+        ['Arya', '28', 'Mumbai'],
+        ['Ravi', '35', 'Delhi']
+    ]
+
+    with open('example_custom.csv', 'w', newline='') as file:
+        writer = csv.writer(file, delimiter='|')
+        writer.writerows(data)
+
+    with open('example_custom.csv', 'r') as file:
+        reader = csv.reader(file, delimiter='|')
+        for row in reader:
+            print(row)
+
+
+[5] csv.DictWriter - Writing CSV from Dictionaries
+--------------------------------------------------
+- csv.DictWriter(file, fieldnames=fieldnames): Creates an object which operates like 
+  a regular writer but maps dictionaries onto output rows.
+- fieldnames: A sequence of keys that identify the order in which values in the 
+  dictionary are written to the CSV file.
+- writer.writeheader(): Writes a row with the field names.
+- writer.writerow(dict_row): Writes a dictionary row.
+
+Example:
+    import csv
+
+    data = [
+        {'Name': 'Arya', 'Age': 28, 'City': 'Mumbai'},
+        {'Name': 'Ravi', 'Age': 35, 'City': 'Delhi'},
+        {'Name': 'Priya', 'Age': 32, 'City': 'Bangalore'}
+    ]
+
+    fieldnames = ['Name', 'Age', 'City']
+
+    with open('example_dict.csv', 'w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in data:
+            writer.writerow(row)
+    print("Data has been written to 'example_dict.csv'.")
+
+
+[6] Appending a Dictionary to a CSV File
+----------------------------------------
+- Open with mode 'a'.
+- Use file.tell() == 0 to check if the file is empty before writing headers.
+
+Example:
+    import csv
+
+    new_data = {'Name': 'Sam', 'Age': 40, 'City': 'Kolkata'}
+    fieldnames = ['Name', 'Age', 'City']
+
+    with open('example_dict.csv', 'a', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        if file.tell() == 0:
+            writer.writeheader()
+        writer.writerow(new_data)
+    print("Data has been appended to 'example_dict.csv'.")
+
+
+[7] csv.DictReader - Reading Specific Columns
+---------------------------------------------
+- csv.DictReader(file): Creates an object that operates like a regular reader but maps 
+  the information in each row to a dict whose keys are given by the optional fieldnames 
+  parameter (or inferred from the first line).
+
+Example:
+    import csv
+
+    with open('example_dict.csv', 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            print(row['Name'], row['Age'])
+
+
+--------------------------------------------------------------------------------
+5. PANDAS FILE I/O (CSV & EXCEL)
+--------------------------------------------------------------------------------
+
+[1] pd.read_csv() - Detailed Parameter Reference
+------------------------------------------------
+Syntax:
+    pd.read_csv(filepath_or_buffer, sep=',', header='infer', names=None, 
+                index_col=None, usecols=None, na_values=None, 
+                skiprows=None, nrows=None)
+
+Attributes & Descriptions:
+1. filepath_or_buffer:
+   - Specifies the path of the CSV file to be read. It can be a file path (string),
+     a URL, or a file-like object (e.g., StringIO).
+   - Example:
+     df = pd.read_csv("PastHires.csv")
+
+2. sep:
+   - Specifies the delimiter or separator used in the CSV file.
+   - Default is a comma (',').
+   - Can be set to any character or string (e.g., sep='|', sep=';', sep='\t').
+   - Example:
+     df = pd.read_csv("data.csv", sep='|')
+
+3. header:
+   - Specifies which row in the CSV file to use as column names.
+   - header=0:
+     Explicitly instructs Pandas to use the first row (index 0) of the CSV file 
+     as column names.
+     Example: df = pd.read_csv("PastHires.csv", header=0)
+   - header=None:
+     Pandas will not use any row from the CSV file as column names. Integer column 
+     indices starting from 0 are automatically generated. Useful when the CSV file 
+     does not contain column headers.
+     Example: df = pd.read_csv("PastHires.csv", header=None)
+   - header='infer':
+     Automatically infers column names from the first row of the CSV file.
+     * If no 'names' are passed, behaviour is identical to header=0.
+     * If custom column names are passed to 'names', behaviour is identical to header=None.
+     Example: df = pd.read_csv("PastHires.csv", header='infer')
+
+4. names:
+   - Allows you to specify custom column names instead of using those from the header row.
+   - Accepts a list of strings or numbers.
+   - Interaction with header:
+     * If names are passed and header is not specified, header behaves as None.
+       Example: df = pd.read_csv("PastHires.csv", names=[1, 2, 3, 4, 5, 6, 7])
+     * If you want to replace the first row header with new custom names, explicitly 
+       pass header=0 and names=[...]:
+       Example: df = pd.read_csv("PastHires.csv", header=0, names=['Exp', 'Emp', 'PrevEmp', 'Edu', 'TopSchool', 'Interned', 'Hired'])
+
+5. index_col:
+   - Specifies which column(s) to use as the index (row labels) of the DataFrame.
+   - Can be a single column name (string), integer column index, or a list of column names/indices.
+   - Example:
+     df = pd.read_csv("PastHires.csv", index_col='Years Experience')
+     df = pd.read_csv("PastHires.csv", index_col=0)
+
+6. usecols:
+   - Subset of columns to select, denoted either by column labels (strings) or column indices (integers).
+   - If list-like, all elements must either be positional (integer indices) or strings 
+     corresponding to column names (provided by user in 'names' or inferred from document header).
+   - Examples:
+     df = pd.read_csv("PastHires.csv", usecols=['Hired', 'Interned'])
+     df = pd.read_csv("PastHires.csv", usecols=[0, 1, 3])
+
+7. na_values:
+   - Specifies additional strings to recognize as missing/NA values.
+   - Accepts a scalar string or a list of strings (e.g., ['NA', 'missing', '-999', '?', 'None']).
+   - Example:
+     df = pd.read_csv("PastHires.csv", na_values=['?', 'Not Available', 'none'])
+
+8. skiprows:
+   - Specifies the number of rows to skip from the beginning of the file (integer),
+     or a list of line numbers (0-indexed) to skip.
+   - Example:
+     # Skip first 2 lines of the CSV file:
+     df = pd.read_csv("PastHires.csv", skiprows=2)
+
+9. nrows:
+   - Specifies the exact number of rows to read from the beginning of the file.
+   - Useful for reading large files in chunks or previewing data.
+   - Example:
+     df = pd.read_csv("PastHires.csv", nrows=5)
+
+
+[2] df.to_csv() - Writing DataFrame to CSV
+------------------------------------------
+Syntax:
+    df.to_csv(filepath, index=True)
+
+Example:
+    df.to_csv("exported_data.csv", index=False)
+
+
+[3] pd.read_excel() and df.to_excel()
+-------------------------------------
+Syntax:
+    pd.read_excel(filepath, sheet_name=0)
+    df.to_excel(filepath, sheet_name='Sheet1')
+
+Descriptions:
+- pd.read_excel(filepath, sheet_name):
+  Reads an Excel table into a pandas DataFrame.
+  sheet_name specifies the sheet to read (string name, integer index, or None for all).
+  Example:
+    df_excel = pd.read_excel("employee_data.xlsx", sheet_name="Salaries")
+
+- df.to_excel(filepath, sheet_name):
+  Writes DataFrame to an Excel spreadsheet.
+  Example:
+    df.to_excel("output_data.xlsx", sheet_name="Summary", index=False)
+
+================================================================================

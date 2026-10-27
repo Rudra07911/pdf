@@ -1,0 +1,271 @@
+================================================================================
+                    PANDAS: INDEXING AND FILTERING
+================================================================================
+Reference Manual: Python Data Science Syllabus
+Topic: Data Selection (loc, iloc, at, iat) & Conditional Boolean Filtering
+================================================================================
+
+--------------------------------------------------------------------------------
+1. OVERVIEW OF INDEXERS
+--------------------------------------------------------------------------------
+Pandas provides four distinct indexers for retrieving data:
+1. loc[]  : Label-based selection (uses row labels and column names).
+2. iloc[] : Position-based selection (uses 0-indexed integer offsets).
+3. at[]   : Fast scalar accessor for a single value using labels.
+4. iat[]  : Fast scalar accessor for a single value using integer positions.
+
+Sample Working DataFrame:
+    import pandas as pd
+    import numpy as np
+
+    data = {
+        'Roll No': [101, 102, 103, 104],
+        'SAP ID': [500123, 500124, 500125, 500126],
+        'First Name': ['Aditya', 'Aarav', 'Advik', 'Akshay'],
+        'Last Name': ['Gupta', 'Patel', 'Shah', 'Singh'],
+        'Area': ['Dadar', 'Andheri', 'Bandra', 'Colaba']
+    }
+    df = pd.DataFrame(data, index=[0, 2, 1, 4])
+
+
+--------------------------------------------------------------------------------
+2. LABEL-BASED SELECTION: df.loc
+--------------------------------------------------------------------------------
+Syntax:
+    df.loc[row_label(s), col_label(s)]
+
+CRITICAL RULE FOR loc SLICING:
+Both start and stop boundaries are INCLUSIVE.
+
+[1] Single Row Label:
+    df.loc[4]
+    # Returns the row labeled 4 as a Series.
+    # Output:
+    # Roll No          104
+    # SAP ID        500126
+    # First Name    Akshay
+    # Last Name      Singh
+    # Area          Colaba
+    # Name: 4, dtype: object
+
+[2] List of Row Labels:
+    df.loc[[2, 4]]
+    # Returns rows with labels 2 and 4 as a DataFrame.
+    # Output:
+    #    Roll No  SAP ID First Name Last Name     Area
+    # 2      102  500124      Aarav     Patel  Andheri
+    # 4      104  500126     Akshay     Singh   Colaba
+
+[3] Label-Based Slicing:
+    df.loc[2:4]
+    # Returns all rows from label 2 through label 4 inclusive.
+    # (In index order [0, 2, 1, 4], this yields rows 2, 1, and 4).
+    # Output:
+    #    Roll No  SAP ID First Name Last Name     Area
+    # 2      102  500124      Aarav     Patel  Andheri
+    # 1      103  500125      Advik      Shah   Bandra
+    # 4      104  500126     Akshay     Singh   Colaba
+
+[4] Specific Row and Specific Column:
+    df.loc[4, 'Area']
+    # Output: 'Colaba'
+
+    df.loc[5, 'Interned']
+    # Returns the 'Interned' column of record with label 5.
+
+[5] 2D Slicing (Rows and Columns):
+    df.loc[2:1, 'SAP ID':'Last Name']
+    # Output:
+    #    SAP ID First Name Last Name
+    # 2  500124      Aarav     Patel
+    # 1  500125      Advik      Shah
+
+[6] Adding a New Row via loc:
+    df.loc['St5'] = [105, 500127, 'Shailly', 'Kumar', 'Chembur']
+
+
+--------------------------------------------------------------------------------
+3. INTEGER POSITIONAL SELECTION: df.iloc
+--------------------------------------------------------------------------------
+Syntax:
+    df.iloc[row_position(s), col_position(s)]
+
+CRITICAL RULE FOR iloc SLICING:
+Start boundary is INCLUSIVE; stop boundary is EXCLUSIVE (0 to length-1).
+
+[1] Single Positional Integer:
+    df.iloc[2]
+    # Returns 3rd physical row (position 2) as a Series (row with index label 1).
+
+    df.iloc[[2]]
+    # Returns 3rd physical row as a DataFrame.
+
+[2] List of Positional Integers:
+    df.iloc[[2, 3]]
+    # Returns rows at positions 2 and 3 as a DataFrame.
+    # Output:
+    #    Roll No  SAP ID First Name Last Name    Area
+    # 1      103  500125      Advik      Shah  Bandra
+    # 4      104  500126     Akshay     Singh  Colaba
+
+[3] Positional Slicing:
+    df.iloc[1:3]
+    # Selects rows at positions 1 and 2 (position 3 is EXCLUDED).
+    # Output:
+    #    Roll No  SAP ID First Name Last Name     Area
+    # 2      102  500124      Aarav     Patel  Andheri
+    # 1      103  500125      Advik      Shah   Bandra
+
+[4] Comparison Between loc and iloc Slicing:
+    df.iloc[1:2] -> Returns 1 row (position 1 only).
+    df.loc[1:2]  -> Returns all rows between label 1 and label 2 inclusive.
+
+[5] 2D Positional Slicing:
+    df.iloc[1:3, 0:2]
+    # Rows at positions 1 and 2; columns at positions 0 and 1.
+    # Output:
+    #    Roll No  SAP ID
+    # 2      102  500124
+    # 1      103  500125
+
+[6] Alternate Rows (Step Slicing):
+    df.iloc[::2]
+    # Selects every alternate row (positions 0, 2, 4...).
+
+[7] First n Rows / Last n Rows:
+    df.iloc[:3]   # First 3 rows (positions 0, 1, 2)
+    df.iloc[-3:]  # Last 3 rows
+
+[8] Boolean List Selection:
+    df.iloc[[True, False, False, True]]
+    # Returns rows where the boolean flag is True.
+    # (Length of list must match total rows in DataFrame).
+
+
+--------------------------------------------------------------------------------
+4. SINGLE VALUE ACCESS: df.at AND df.iat
+--------------------------------------------------------------------------------
+Purpose:
+Optimized scalar accessors that retrieve exactly one single value at high speed.
+
+[1] df.at - Label-Based Scalar Access
+-------------------------------------
+Syntax:
+    df.at[row_label, col_label]
+
+Examples from Syllabus:
+    val1 = df.at[4, 'Area']
+    print(val1)  # Output: 'Colaba'
+
+    val2 = df.at[3, 'ProjectsCompleted']
+    val3 = df.at['T3', 'total']
+    val4 = df.at['T1', 'ip']
+
+[2] df.iat - Positional Scalar Access
+-------------------------------------
+Syntax:
+    df.iat[row_position, col_position]
+
+Examples from Syllabus:
+    val5 = df.iat[0, 2]
+    print(val5)  # Output: 'Aditya' (row pos 0, col pos 2)
+
+    val6 = df.iat[4, 5]
+
+[3] Key Differences Summary:
+--------------------------------------------------------------------------------
+Feature           | loc / iloc                     | at / iat
+------------------+--------------------------------+----------------------------
+Return Type       | Series, DataFrame, or Scalar   | Strictly single Scalar
+Parameters        | Slices, lists, boolean masks   | Exactly one row & one col
+Performance       | General purpose with overhead  | Extremely fast scalar lookup
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+5. FILTERING: CONDITIONAL QUERIES & LOGICAL OPERATORS
+--------------------------------------------------------------------------------
+
+[1] Comparison Operators (>, <, ==, !=, >=, <=)
+-----------------------------------------------
+1. Numeric Filtering:
+   # Employees with salary > 20,000:
+   high_salary = df[df['Salary'] > 20000]
+
+   # Employees having experience greater than 7 years:
+   exp_gt_7 = df[df['Experience'] > 7]
+
+   # Items with count > 25:
+   high_count = df[df['Count'] > 25]
+
+2. String / Categorical Filtering:
+   # Employees working in the IT department:
+   it_emp = df[df['Department'] == 'IT']
+
+   # Employees from Mumbai:
+   mumbai_emp = df[df['City'] == 'Mumbai']
+
+3. Filtering with Specific Column Projections:
+   # Retrieve only EName and Salary for employees earning > 20,000:
+   print(df[df['Salary'] > 20000][['EName', 'Salary']])
+
+   # Retrieve Name, Experience, and ProjectsCompleted for Score > 90:
+   print(df.loc[df['PerformanceScore'] > 90, ['Name', 'Experience', 'ProjectsCompleted']])
+
+
+[2] Logical Operators: & (AND), | (OR)
+--------------------------------------
+SYNTAX RULES:
+- Python keywords 'and' / 'or' CANNOT be used on Series objects.
+- Use bitwise '&' (AND) and '|' (OR).
+- Every condition MUST be enclosed inside parentheses: (cond1) & (cond2).
+
+1. Logical AND (&):
+   # Experience > 5 years AND Salary < 80,000:
+   df[(df['Experience'] > 5) & (df['Salary'] < 80000)]
+
+   # PerformanceScore between 85 and 95:
+   df[(df['PerformanceScore'] >= 85) & (df['PerformanceScore'] <= 95)]
+
+   # Employees from Mumbai AND Salary > 60,000:
+   df[(df['City'] == 'Mumbai') & (df['Salary'] > 60000)]
+
+   # PerformanceScore > 90 AND Experience > 5:
+   df[(df['PerformanceScore'] > 90) & (df['Experience'] > 5)]
+
+2. Logical OR (|):
+   # Employees from IT OR Finance department:
+   df[(df['Department'] == 'IT') | (df['Department'] == 'Finance')]
+
+   # Orders where Cuisine_Type is 'Italian' OR 'Mexican':
+   df[(df['Cuisine_Type'] == 'Italian') | (df['Cuisine_Type'] == 'Mexican')]
+
+
+--------------------------------------------------------------------------------
+6. PRACTICAL SYLLABUS QUERIES & PATTERNS
+--------------------------------------------------------------------------------
+From Practical Sheets 4 & 5:
+1. Complete information of employees working in IT:
+   df.loc[df['Department'] == 'IT']
+
+2. Employees whose salary exceeds ₹75,000:
+   df.loc[df['Salary'] > 75000]
+
+3. Rows 2 to 7 and columns Name, Department, Salary using loc:
+   df.loc[2:7, ['Name', 'Department', 'Salary']]
+
+4. First 5 rows and first 6 columns using iloc:
+   df.iloc[0:5, 0:6]
+
+5. Rows from position 3 to 8 and columns from position 2 to 6:
+   df.iloc[3:9, 2:7]
+
+6. Last three rows using iloc:
+   df.iloc[-3:]
+
+7. First 80% records as training set using iloc:
+   train_size = int(0.8 * len(df))
+   train_df = df.iloc[:train_size]
+   test_df = df.iloc[train_size:]
+
+================================================================================

@@ -1,0 +1,137 @@
+================================================================================
+                        PANDAS: DATA CLEANING
+================================================================================
+Reference Manual: Python Data Science Syllabus
+Topic: Handling Missing Values (isnull, fillna, dropna) & Duplicates (duplicated, drop_duplicates)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. MISSING VALUES HANDLING
+--------------------------------------------------------------------------------
+
+[1] Theoretical Foundation & Strategy
+-------------------------------------
+Syllabus Concept:
+"The dataset we work on may not be always refined. We will have to check for missing 
+values and find a way to handle them. We can either replace them or get rid of them 
+completely or simply remove the columns or rows with missing values. 
+Over here we have 207 missing values present in 2 features. Let's replace these values 
+with median as getting rid of such large number of null values which might contain 
+valuable information for building our model will not be a good choice."
+
+Strategy:
+1. Imputation (Preferred for large null counts containing valuable signals):
+   - Replace numeric missing values with the median.
+   - Replace categorical missing values with the mode (most frequent value).
+2. Dropping Columns:
+   - Used when a feature has an overwhelming majority of missing entries (e.g., 'Cabin' with 1014 missing values).
+3. Dropping Rows:
+   - Used when null occurrences are few and negligible.
+
+
+[2] Detection Commands
+----------------------
+1. Count missing values in each column:
+   print(df.isnull().sum())
+
+2. Check if ANY missing value exists across the entire DataFrame (returns single True/False):
+   print(df.isnull().values.any())
+
+
+[3] Imputation: df.fillna()
+---------------------------
+Syntax:
+    df['column'].fillna(value, inplace=True)
+    df.fillna(value, inplace=True)
+
+Examples from Syllabus (Titanic Dataset Demo):
+    import pandas as pd
+    import numpy as np
+
+    titanic_data = pd.read_csv("titanic.csv")
+
+    # 1. Median Imputation for Numeric Feature ('Age'):
+    median_age = titanic_data['Age'].median()
+    titanic_data['Age'].fillna(median_age, inplace=True)
+
+    # 2. Imputing All Numeric Columns with Their Column Medians:
+    titanic_data.fillna(titanic_data.median(), inplace=True)
+
+    # 3. Mode Imputation for Categorical Feature ('Embarked'):
+    most_frequent_embarked = titanic_data['Embarked'].mode()[0]
+    titanic_data['Embarked'].fillna(most_frequent_embarked, inplace=True)
+
+
+[4] Deletion: df.dropna() and df.drop()
+---------------------------------------
+1. Removing a column with excessive missing values:
+   titanic_data.drop(columns=['Cabin'], inplace=True)
+
+2. Removing rows with missing values:
+   titanic_data.dropna(inplace=True)
+
+
+--------------------------------------------------------------------------------
+2. DUPLICATES HANDLING
+--------------------------------------------------------------------------------
+
+Syllabus Overview:
+Pandas provides several methods to detect and remove duplicates in a DataFrame:
+1. duplicated()
+2. drop_duplicates()
+
+
+[1] Detecting Duplicates: df.duplicated()
+-----------------------------------------
+Syntax:
+    df.duplicated(subset=None, keep='first')
+
+The keep Parameter:
+- 'first' (default): Marks duplicates as True except for the first occurrence.
+- 'last': Marks duplicates as True except for the last occurrence.
+- False: Marks ALL occurrences of duplicates as True (every copy is flagged).
+
+Example from Syllabus (Titanic Dataset Demo):
+    duplicates1 = titanic.duplicated(keep='first')
+    duplicates2 = titanic.duplicated(keep='last')
+    duplicates3 = titanic.duplicated(keep=False)
+
+    print('Shape of dataset is', titanic.shape)
+    print(f"Number of duplicate rows in 1: {duplicates1.sum()}")
+    print(f"Number of duplicate rows in 2: {duplicates2.sum()}")
+    print(f"Number of duplicate rows in 3: {duplicates3.sum()}")
+
+Syllabus Output:
+    Shape of dataset is (891, 15)
+    Number of duplicate rows in 1: 107
+    Number of duplicate rows in 2: 107
+    Number of duplicate rows in 3: 160
+
+
+[2] Removing Duplicates: df.drop_duplicates()
+---------------------------------------------
+Syntax:
+    df.drop_duplicates(subset=None, keep='first', inplace=False, ignore_index=False)
+
+Attributes & Descriptions:
+- subset: Columns to consider when identifying duplicates. If None, all columns are evaluated.
+- keep: Determines which duplicates (if any) to keep:
+  * 'first' (default): Drop duplicates except for the first occurrence.
+  * 'last': Drop duplicates except for the last occurrence.
+  * False: Drop ALL duplicates (keeps no occurrences of duplicated rows).
+- inplace: If True, do operation in-place and return None; if False (default), returns a new DataFrame.
+- ignore_index: If True, the resulting axis will be labeled 0, 1, 2, etc.
+
+Examples from Syllabus:
+    # 1. Remove all duplicates (keeping neither first nor last):
+    titanic = titanic.drop_duplicates(keep=False)
+    print(f"Number of rows after removing duplicates: {titanic.shape[0]}")
+    # Syllabus Output: Number of rows after removing duplicates: 731
+
+    # 2. In-place drop keeping the first occurrence:
+    df.drop_duplicates(keep='first', inplace=True)
+
+    # 3. Drop duplicates based on a subset of columns with re-indexed rows:
+    df.drop_duplicates(subset=['EmpID'], keep='first', ignore_index=True)
+
+================================================================================

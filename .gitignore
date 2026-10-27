@@ -1,0 +1,8 @@
+*.pptx
+*.docx
+String Methods.txt
+dump_*
+extract_content.ps1
+check_media.ps1
+map_*.ps1
+extracted_*.txt

@@ -1,0 +1,438 @@
+================================================================================
+                        FILE 4: NUMPY OPERATIONS
+================================================================================
+Reference Manual: Python Data Science Syllabus
+Topic: NumPy Array Creation, Attributes, Reshaping (order='C'/'F'), 
+       Flattening (ravel vs flatten vs flat), Copying (copy, copyto),
+       Math & Stats, Matrix Algebra, Advanced Tools, & Standardization
+================================================================================
+
+--------------------------------------------------------------------------------
+1. ARRAY CREATION AND PROPERTIES
+--------------------------------------------------------------------------------
+
+[1] Array Creation Functions
+----------------------------
+1. np.array(object):
+   Creates an array from a Python list or nested list.
+   Example:
+     import numpy as np
+     a = np.array([1, 2, 3, 4])
+     e = np.array([[1, 2], [3, 4], [5, 6]])
+
+2. np.zeros(shape):
+   Returns a new array of specified shape filled with zeros (float64 by default).
+   Example:
+     b = np.zeros((3, 4))   # 3 rows, 4 columns of 0.0
+
+3. np.ones(shape):
+   Returns a new array of specified shape filled with ones (float64 by default).
+   Example:
+     c = np.ones((2, 3))    # 2 rows, 3 columns of 1.0
+
+4. np.empty(shape):
+   Returns a new uninitialized array of specified shape with arbitrary values.
+   Example:
+     d = np.empty((2, 2))
+
+5. np.arange(start, stop, step):
+   Generates values with a specified step size between start and stop (exclusive of stop),
+   similar to Python's built-in range function.
+   Example:
+     arange_array = np.arange(2, 20, 3)
+     # Output: [ 2  5  8 11 14 17 ]
+
+6. np.linspace(start, stop, num):
+   Generates values with a specified number of points (num) evenly spaced between 
+   the start and stop values (inclusive of stop).
+   Example:
+     linspace_array = np.linspace(0, 1, 5)
+     # Output: [0.   0.25 0.5  0.75 1.  ]
+
+7. np.asarray(a, dtype=None):
+   Converts an input (such as a list) to an ndarray, optionally casting to a specified dtype.
+   Examples from Syllabus:
+     l = [11.699, 678.78, 300, 23, 0.0, 'good']
+     a_str = np.asarray(l, dtype=np.str_)
+     # Output: ['11.699' '678.78' '300' '23' '0.0' 'good']
+
+     d_bool = np.asarray(l, dtype=np.bool_)
+     # Output: [ True  True  True  True False  True]
+
+
+[2] Array Properties & Dimensional Inspection
+---------------------------------------------
+Property / Function        Description & Example
+--------------------------------------------------------------------------------
+arr.shape                  Tuple representing array dimensions.
+                           print(e.shape)      # Output: (3, 2)
+                           print(np.shape(e))  # Output: (3, 2)
+
+arr.size                   Total number of elements in the array.
+                           print(e.size)       # Output: 6
+                           print(np.size(e))   # Output: 6
+
+arr.ndim                   Number of array dimensions (axes).
+                           print(e.ndim)       # Output: 2
+                           print(np.ndim(e))   # Output: 2
+
+arr.dtype                  Data type of the array's elements.
+                           print(e.dtype)      # Output: int64 / int32
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+2. RESHAPING AND FLATTENING
+--------------------------------------------------------------------------------
+
+[1] np.reshape() - Dimensions & Memory Order
+--------------------------------------------
+Syntax:
+    np.reshape(a, newshape, order='C')
+
+Definition from Syllabus:
+- The numpy.reshape() function is used to change the shape (dimensions) of an array 
+  without changing its data.
+- Size Preservation Constraint:
+  "reshape function will create an array with the same number of elements as the 
+  original array, i.e. of the same size as that of the original array. If you want 
+  to convert the original array to a bigger array, reshape cannot add more elements 
+  (than available in the original array) to give you a bigger array."
+
+Order Parameter:
+- order='C': C-style order, meaning row-major order (elements read/stored row-by-row). Default.
+- order='F': Fortran-style order, meaning column-major order (elements read/stored column-by-column).
+
+Examples from Syllabus:
+    import numpy as np
+
+    a = np.array([[230, 11, 67], 
+                  [62, 89, 3], 
+                  [90, 34, 77], 
+                  [101, 74, 88]])  # Shape: (4, 3), Size: 12
+
+    # 1. Reshape to (6, 2) using default C-order:
+    b = np.reshape(a, (6, 2))
+
+    # 2. Reshape to (3, 4) using F-order (Column-major):
+    c = np.reshape(a, (3, 4), order="F")
+    # c will read down columns first: 230, 62, 90, 101, then 11, 89...
+
+    # 3. Reshape b to (3, 4) using F-order:
+    d = np.reshape(b, (3, 4), order="F")
+
+
+[2] np.ravel() vs. flatten() vs. flat
+-------------------------------------
+1. np.ravel(a, order='C'):
+   - Function used to create a contiguous 1D flattened array.
+   - Supports order='C' (row-major) and order='F' (column-major).
+   - Examples from Syllabus:
+     a_r = np.ravel(a)
+     a_r_F = np.ravel(a, order='F')
+
+2. a.flatten(order='C'):
+   - Returns a 1D copy of the array flattened into one dimension.
+
+3. arr.flat - 1D Flat Iterator:
+   - A 1-D iterator over the array. Allows 1D indexing into multi-dimensional arrays.
+   - Example from Syllabus:
+     x = np.array([[2, 3, 4], 
+                   [5, 6, 7]])
+     y = np.ravel(x, order='F')  # y is [2, 5, 3, 6, 4, 7]
+
+     print(x.flat[2])  # Output: 4 (3rd element in row-major traversal of x)
+     print(y.flat[2])  # Output: 3 (3rd element in y)
+
+4. MEMORY DIFFERENCE: ravel() vs. flatten()
+   -----------------------------------------------------------------------------
+   Exact Syllabus Distinction:
+   "The key distinction between the flatten() and ravel() functions in NumPy is that 
+   flatten() always creates a new independent copy of the data as a one-dimensional 
+   array, while ravel() aims for memory efficiency by either offering a view of the 
+   existing array or creating a new one-dimensional array only when necessary."
+   -----------------------------------------------------------------------------
+
+Code Proof Demonstration (from Presentation):
+    import numpy as np
+
+    x = np.array([[2, 3, 4], 
+                  [5, 6, 7]])
+
+    y = x.ravel()     # Creates a VIEW
+    z = x.flatten()   # Creates an independent COPY
+
+    x[0][0] = 400     # Modify original array
+
+    print("y (ravel view):   ", y)
+    print("z (flatten copy): ", z)
+
+Output:
+    y (ravel view):    [400   3   4   5   6   7]  -> MODIFIED! (Shares memory)
+    z (flatten copy):  [  2   3   4   5   6   7]  -> UNMODIFIED! (Independent copy)
+
+
+--------------------------------------------------------------------------------
+3. COPYING: np.copy() AND np.copyto()
+--------------------------------------------------------------------------------
+
+[1] np.copy(arr) - Full Deep Copy
+---------------------------------
+- Creates a complete, independent copy of the array.
+- In contrast, direct assignment `y = new_e` only creates a reference alias (shallow pointer).
+
+Example from Syllabus:
+    import numpy as np
+
+    new_e = np.array([[11, 22], [33, 44], [55, 66]])
+    z = np.copy(new_e)   # Independent copy
+    y = new_e           # Reference alias
+
+    new_e[0, 0] = 800
+
+    print("new_e[0] == z[0]:", new_e[0] == z[0])  # False (z was not affected)
+    print("new_e[0] == y[0]:", new_e[0] == y[0])  # True  (y alias was affected)
+
+
+[2] np.copyto() - Conditional Copying
+-------------------------------------
+Syntax:
+    np.copyto(dst, src, where=...)
+
+Parameters:
+- dst: Target array where values will be copied to.
+- src: Source array from which values are copied.
+- where: Boolean array of the same shape specifying which elements to copy.
+
+Example from Syllabus:
+    e = np.array([[1, 2], [3, 4], [5, 6]])
+    new_e = np.array([[11, 22], [33, 44], [55, 66]])
+
+    # Copy elements from 'e' into 'new_e' only where mask is True:
+    np.copyto(new_e, e, where=[[True, False], [True, True], [False, False]])
+    print(new_e)
+
+Output:
+    [[ 1 22]
+     [ 3  4]
+     [55 66]]
+
+
+--------------------------------------------------------------------------------
+4. MATH AND STATISTICAL OPERATIONS
+--------------------------------------------------------------------------------
+
+[1] Element-Wise Arithmetic Operators (+, -, *, /)
+--------------------------------------------------
+Example:
+    a = np.array([1, 2, 3])
+    b = np.array([4, 5, 6])
+
+    s    = a + b  # Element-wise addition:       [5, 7, 9]
+    diff = a - b  # Element-wise subtraction:    [-3, -3, -3]
+    p    = a * b  # Element-wise multiplication: [4, 10, 18]
+    d    = a / b  # Element-wise division:       [0.25, 0.4, 0.5]
+
+
+[2] Mathematical Functions
+--------------------------
+1. np.abs(array):
+   Computes the absolute value element-wise.
+   Example:
+     arr = np.array([1, -2, 3, -4])
+     abs_arr = np.abs(arr)  # Output: [1, 2, 3, 4]
+
+2. np.sqrt(array):
+   Computes the square root of elements.
+   Example:
+     sqrt_arr = np.sqrt(np.abs(arr))
+
+3. np.exp(array):
+   Computes the exponential (e^x) of each element.
+   Example:
+     exp_arr = np.exp(arr)
+
+
+[3] Statistical Functions
+-------------------------
+Example Array:
+    e = np.array([[1, 2], 
+                  [3, 4], 
+                  [5, 6]])
+
+Function                  Description & Output
+--------------------------------------------------------------------------------
+np.mean(e)                Mean of all elements -> 3.5
+np.median(e)              Median of all elements -> 3.5
+np.max(e)                 Maximum value in array -> 6
+np.min(e)                 Minimum value in array -> 1
+np.sum(e)                 Total sum of all elements -> 21
+np.sum(e, axis=0)         Column-wise sum (along rows) -> [ 9, 12 ]
+np.sum(e, axis=1)         Row-wise sum (along columns) -> [ 3,  7, 11 ]
+--------------------------------------------------------------------------------
+
+
+[4] Dot Product: np.dot()
+-------------------------
+Computes matrix multiplication / dot product of two arrays.
+Example from Syllabus:
+    a = np.array([[1, 2, 3], 
+                  [3, 4, 2]])          # Shape: (2, 3)
+
+    b = np.array([[5, 6], 
+                  [7, 8], 
+                  [2, 2]])             # Shape: (3, 2)
+
+    dot_product1 = np.dot(a, b)        # Shape: (2, 2)
+    dot_product2 = np.dot(b, a)        # Shape: (3, 3)
+
+    print("np.dot(a, b):\n", dot_product1)
+    # [[25 28]
+    #  [47 54]]
+
+
+--------------------------------------------------------------------------------
+5. MATRIX ALGEBRA
+--------------------------------------------------------------------------------
+
+Functions:
+1. np.transpose(matrix) / matrix.T:
+   Permutes the dimensions of an array (swaps rows and columns).
+   Example:
+     matrix = np.array([[1, 2], [3, 4]])
+     transpose_matrix = np.transpose(matrix)
+     # [[1 3]
+     #  [2 4]]
+
+2. np.linalg.inv(matrix):
+   Computes the multiplicative inverse of a square matrix.
+   Example:
+     inverse_matrix = np.linalg.inv(matrix)
+     # [[-2.   1. ]
+     #  [ 1.5 -0.5]]
+
+3. np.linalg.det(matrix):
+   Computes the determinant of a square matrix.
+   Example:
+     determinant = np.linalg.det(matrix)
+     # 1*4 - 2*3 = -2.0000000000000004
+
+
+--------------------------------------------------------------------------------
+6. ADVANCED ARRAY TOOLS
+--------------------------------------------------------------------------------
+
+[1] np.where()
+--------------
+- Returns elements chosen from x or y depending on condition, or returns coordinates 
+  where condition is True.
+- Example from Syllabus:
+    arr_1 = np.linspace(0, 10, 5)
+    arr_2 = np.arange(0, 5)
+    indices = np.where(arr_1 == arr_2)
+    # Returns tuple of index arrays where elements match.
+
+    # Replacing even numbers in arr_div_3 with 10000:
+    arr_div_3 = np.array([3, 6, 9, 12, 15])
+    arr_div_3 = np.where(arr_div_3 % 2 == 0, 10000, arr_div_3)
+    # Output: [    3 10000     9 10000    15]
+
+
+[2] Set Operations: np.intersect1d() and np.setdiff1d()
+-------------------------------------------------------
+Both functions accept two 1D arrays as parameters:
+1. np.intersect1d(ar1, ar2):
+   Returns the sorted, unique values that are in both of the input arrays.
+   Example:
+     a1 = np.array([1, 2, 3, 4, 5])
+     a2 = np.array([3, 4, 5, 6, 7])
+     common = np.intersect1d(a1, a2)
+     # Output: [3, 4, 5]
+
+2. np.setdiff1d(ar1, ar2):
+   Returns the unique values in ar1 that are not in ar2.
+   Example:
+     diff = np.setdiff1d(a1, a2)
+     # Output: [1, 2]
+
+
+[3] Concatenation: np.concatenate()
+-----------------------------------
+Syntax:
+    np.concatenate((a1, a2, ...), axis=0)
+
+Examples from Syllabus:
+    a = np.array([[1, 2], [3, 4]])
+    b = np.array([[5, 6]])
+
+    # Row-wise concatenation:
+    c = np.concatenate((a, b), axis=0)
+
+    # Column-wise concatenation (with transpose):
+    d = np.concatenate((a, b.T), axis=1)
+
+    # Flattened concatenation (No axis):
+    e = np.concatenate((a, b), axis=None)
+
+
+[4] Dimension Permutations and Slicing
+--------------------------------------
+Examples from Syllabus:
+    arr = np.array([[10, 20, 30], 
+                    [40, 50, 60], 
+                    [70, 80, 90]])
+
+    # Permute columns (reorder columns to 1, 0, 2):
+    arr_cols = arr[:, [1, 0, 2]]
+
+    # Reverse rows:
+    arr_rev = arr[::-1, :]
+
+
+--------------------------------------------------------------------------------
+7. STANDARDIZATION (FEATURE SCALING)
+--------------------------------------------------------------------------------
+
+Exact Syllabus Formula:
+--------------------------------------------------------------------------------
+                         (data - mean)
+    Standardized Data = ---------------
+                            std_dev
+--------------------------------------------------------------------------------
+
+Complete Implementation from Presentation:
+    import numpy as np
+
+    data = np.array([[1, 2, 3], 
+                     [4, 5, 6], 
+                     [7, 8, 9]])
+
+    # Step 1: Calculate Mean per feature (column-wise, axis=0)
+    mean = np.mean(data, axis=0)
+
+    # Step 2: Calculate Standard Deviation per feature (column-wise, axis=0)
+    std_dev = np.std(data, axis=0)
+
+    # Step 3: Apply Standardization Formula
+    standardized_data = (data - mean) / std_dev
+
+    print("Original Data:\n", data)
+    print("Mean:\n", mean)
+    print("Standard Deviation:\n", std_dev)
+    print("Standardized Data:\n", standardized_data)
+
+Output:
+    Original Data:
+     [[1 2 3]
+      [4 5 6]
+      [7 8 9]]
+    Mean:
+     [4. 5. 6.]
+    Standard Deviation:
+     [2.44948974 2.44948974 2.44948974]
+    Standardized Data:
+     [[-1.22474487 -1.22474487 -1.22474487]
+      [ 0.          0.          0.        ]
+      [ 1.22474487  1.22474487  1.22474487]]
+
+================================================================================
